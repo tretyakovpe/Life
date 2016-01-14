@@ -20,7 +20,7 @@ public class Life
     public static class AppFrame extends JFrame //Класс окна приложения
     {
         OptionScreen optionWindow = new OptionScreen();
-        static int pauseTimer = 1;
+        static int pauseTimer = 10;
         static int types = 8;
         static int worldSize = 220;
         static int cellSize = 3;
@@ -599,8 +599,13 @@ public class Life
                         hue = (float) 1/cell[i][j].type;
                         brightness = (float) cellMaxAge/cell[i][j].age;
                         saturation = 1f;
-                        C = Color.getHSBColor(hue,saturation,brightness);
-                        //C = cellColor[cell[i][j].type];
+                        
+//Выбор системы цвета, либо мерцающий ужас, либо не очень мерцающий.
+// надо раскоментировать одну из строк
+
+//                        C = Color.getHSBColor(hue,saturation,brightness);
+                        C = cellColor[cell[i][j].type];
+
                         g.setColor(C);
                         g.fillRect(xPos, yPos, cellSize, cellSize);
 //                        g.setColor(C);
