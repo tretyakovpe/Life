@@ -29,6 +29,8 @@ public class Life
         static int youthAge = 4; //половозрелый возраст
         static int youthLife=8; //здоровья для размножения
 
+        static int newBornLife=10; //жизни у новорожденного
+
         public AppFrame()
         {
             this.setTitle("GameOfLife");
@@ -86,6 +88,8 @@ public class Life
             this.setResizable(false);
             this.add(panel);
             
+            panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+            
             JLabel labelTimer = new JLabel("Длительность дня /мсек");
             JSpinner inputTimer = new JSpinner(new SpinnerNumberModel(pauseTimer,1,9999,1));
             JLabel labelTypes = new JLabel("Количество пород");
@@ -100,6 +104,8 @@ public class Life
             JSpinner inputAge = new JSpinner(new SpinnerNumberModel(youthAge,1,9999,1));
             JLabel labelLife = new JLabel("Количество жизни для размножения /ед.");
             JSpinner inputLife = new JSpinner(new SpinnerNumberModel(youthLife,1,9999,1));
+            JLabel labelNbLife = new JLabel("Количество жизни у новорожденного /ед.");
+            JSpinner inputNbLife = new JSpinner(new SpinnerNumberModel(newBornLife,1,9999,1));
             JButton okButton = new JButton(" OK ");
             JButton cancelButton = new JButton(" Отмена ");
 
@@ -117,6 +123,8 @@ public class Life
             panel.add(inputAge);
             panel.add(labelLife,BorderLayout.WEST);
             panel.add(inputLife);
+            panel.add(labelNbLife,BorderLayout.WEST);
+            panel.add(inputNbLife);
             panel.add(okButton,BorderLayout.WEST);
             panel.add(cancelButton,BorderLayout.EAST);
 
@@ -128,7 +136,8 @@ public class Life
                 int e = (Integer) inputMaxAge.getValue();
                 int f = (Integer) inputAge.getValue();
                 int g = (Integer) inputLife.getValue();
-                setParameters(a,b,c,d,e,f,g);
+                int h = (Integer) inputNbLife.getValue();
+                setParameters(a,b,c,d,e,f,g,h);
                 this.setVisible(false);
             });
             cancelButton.addActionListener((ActionEvent ae) -> {
@@ -138,7 +147,7 @@ public class Life
         }
         
         
-        public void setParameters(int timer,int types,int worldSize,int cellSize,int maxAge,int age,int life)
+        public void setParameters(int timer,int types,int worldSize,int cellSize,int maxAge,int age,int life, int nbLife)
         {
             pauseTimer = timer;
             AppFrame.types = types;
@@ -148,6 +157,7 @@ public class Life
             cellMaxAge=maxAge; //максимальный возраст
             youthAge = age; //половозрелый возраст
             youthLife=life; //здоровья для размножения
+            newBornLife=nbLife; //жизни у новорожденного
         }
     }
         /**
@@ -463,7 +473,7 @@ public class Life
                     }
                 }
                     newCell.type = currentCell.type;
-                    newCell.life=10;
+                    newCell.life=newBornLife;
                     newCell.age=1;
                     newCell.maxAge=random.nextInt(cellMaxAge)+youthAge;
                     //currentCell.cell_value=1;
@@ -521,14 +531,14 @@ public class Life
                 if (isAlive == true)
                 {
                     enemyCell.type=currentCell.type;
-                    enemyCell.life=(Integer)enemyCell.life/2;
+                    enemyCell.life /= 2;
                     enemyCell.age=1;
                 }
                 else
                 {
                     death(i,j, " Погибла в драке", 2);
                     currentCell.type=enemyCell.type;
-                    currentCell.life=enemyCell.life/2;
+                    currentCell.life /= 2;
                     currentCell.age=1;
                 }
                 currentCell.enemyDirection=0;
@@ -571,7 +581,9 @@ public class Life
              * @param j координата по вертикали
              * @param reason причина смерти для лога.
              * @param reasonCounter причина смерти для счётчика
-             * 0-от голода, 1-от старости, 2-в бою
+             * 0-от голода, 
+             * 1-от старости, 
+             * 2-в бою
              */
             public void death(int i, int j, String reason, int reasonCounter)
             {
